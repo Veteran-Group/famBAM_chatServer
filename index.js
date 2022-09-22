@@ -13,6 +13,7 @@ const io = require("socket.io")(httpServer, {
 });
 
 const botName = '-=FamBAM BOT=-';
+let chatLog = [];
 
 /*
  *  socket.emit = to the client only
@@ -20,12 +21,18 @@ const botName = '-=FamBAM BOT=-';
  *  io.emit = to everyone
  */
 io.on('connection', (socket) => {
-  socket.on('joinRoom', ({ roomName, username }) => {
-    socket.join(roomName);
-    socket.broadcast.to(roomName).emit('chat', createMessage(botName, `${username} has joined the channel`));
+  socket.on('joinRoom', ({ newMessage, roomInfo, profile}) => {
+    socket.join(roomInfo.roomName);
+    let botMessage = createMessage(botName, `${newMessage.user_name} has joined the channel`);
+    //chatLog.push(botMessage);
+    socket.broadcast.to(roomInfo.roomName).emit('chat', botMessage);
+
+    // Setup to log the bot messages to the database -> errors to correct first
+    //axios.post(`${api}/newMessage?uid=1337&cid=${roomInfo.id}&un=${botMessage.user_name}&um=${botMessage.user_message}&ts=${botMessage.time_stamp}&da=${botMessage.date}`);
   })
 
   socket.on('chat', ({ newMessage, roomInfo, profile}) => {
+    //chatLog.push(newMessage)
     io.in(roomInfo.roomName).emit('chat', newMessage)
     axios.post(`${api}/newMessage?uid=${profile.id}&cid=${roomInfo.id}&un=${newMessage.user_name}&um=${newMessage.user_message}&ts=${newMessage.time_stamp}&da=${newMessage.date}`);
   })
