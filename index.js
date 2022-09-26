@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
     let botMessage = createMessage(botName, `${newMessage.user_name} has joined the channel`);
     //chatLog.push(botMessage);
     socket.broadcast.to(roomInfo.roomName).emit('chat', botMessage);
-    socket.to(roomInfo.roomName).emit(`Welcome, ${newMessage.user_name}} to the '${roomInfo.roomName}' Room.`)
+    socket.to(roomInfo.roomName).emit(`Welcome, ${newMessage.user_name} to the '${roomInfo.roomName}' Room.`)
     // Setup to log the bot messages to the database -> errors to correct first
     //axios.post(`${api}/newMessage?uid=1337&cid=${roomInfo.id}&un=${botMessage.user_name}&um=${botMessage.user_message}&ts=${botMessage.time_stamp}&da=${botMessage.date}`);
   })
